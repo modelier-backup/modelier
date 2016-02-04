@@ -1,0 +1,21 @@
+{
+  "name": "modelier",
+  "version": "0.0.0",
+  "description": "A standard model abstraction",
+  "main": "lib/modelier.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "model",
+    "standard",
+    "orm",
+    "oom",
+    "sql",
+    "nosql",
+    "flat",
+    "file"
+  ],
+  "author": "Nikolay Nemshilov",
+  "license": "ISC"
+}
