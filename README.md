@@ -35,7 +35,7 @@ and relationships between each other.
 import { Schema } from "modelier-mongodb";
 const Model = new Schema({ url: "mongodb://localhost..."  });
 
-export const User = Model.create("User", {
+export const User = new Model("User", {
   email:     String,
   username:  String,
   password:  String,
@@ -44,7 +44,7 @@ export const User = Model.create("User", {
 });
 Model.index(User, "username");
 
-export const Post = Model.create("Post", {
+export const Post = new Model("Post", {
   urlSlug:   String,
   title:     String,
   body:      String,
@@ -55,7 +55,7 @@ export const Post = Model.create("Post", {
 Model.index(Post, "urlSlug");
 Model.index(Post, "createdAt");
 
-export const Comment = Model.create("Comment", {
+export const Comment = new Model("Comment", {
   post:      Post,
   author:    User,
   text:      String,
