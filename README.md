@@ -1,5 +1,7 @@
 # Modelier
 
+__NOTE__: work in progress! this is not a thing yet!
+
 This is an attempt to define a somewhat standard interface to create the model
 part of a system. In a sense it is kind of an abstract of the
 [active record](https://en.wikipedia.org/wiki/Active_record_pattern) married
