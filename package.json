@@ -4,7 +4,10 @@
   "description": "A standard model abstraction",
   "main": "src/modelier.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register test/**/*_test.js"
+    "test":      "mocha --compilers js:babel-core/register test/**/*_test.js",
+    "lint":      "eslint src test",
+    "precommit": "npm run lint",
+    "prepush":   "npm run test"
   },
   "keywords": [
     "model",
@@ -20,11 +23,14 @@
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.4.5",
+    "babel-eslint": "^4.1.8",
     "babel-plugin-syntax-async-functions": "^6.3.13",
     "babel-plugin-transform-async-to-generator": "^6.4.6",
     "babel-plugin-transform-es2015-destructuring": "^6.4.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.4.5",
     "chai": "^3.5.0",
+    "eslint": "^1.10.3",
+    "husky": "^0.10.2",
     "mocha": "^2.4.5"
   }
 }
