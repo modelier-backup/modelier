@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import Schema from "../src/schema";
+import Connection from "../src/connection";
 
 describe("Schema", () => {
   let schema;
@@ -13,8 +14,9 @@ describe("Schema", () => {
       expect(schema).to.be.instanceOf(Function); // should be a class
     });
 
-    it("has the right options stuck on it", () => {
-      expect(schema.options).to.eql({url: "smth://localhost:1234/blah"});
+    it("has a connection object stuck with it", () => {
+      expect(schema.connection).to.be.instanceOf(Connection);
+      expect(schema.connection.options).to.eql({url: "smth://localhost:1234/blah"});
     });
   });
 
