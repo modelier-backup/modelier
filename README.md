@@ -35,18 +35,18 @@ and relationships between each other.
 
 ```js
 import { Schema } from "modelier-mongodb";
-const Model = new Schema({ url: "mongodb://localhost..."  });
+const schema = new Schema({ url: "mongodb://localhost..."  });
 
-export const User = new Model("User", {
+export const User = schema.create("User", {
   email:     String,
   username:  String,
   password:  String,
   createdAt: Date,
   updatedAt: Date
 });
-Model.index(User, "username");
+schema.index(User, "username");
 
-export const Post = new Model("Post", {
+export const Post = schema.create("Post", {
   urlSlug:   String,
   title:     String,
   body:      String,
@@ -54,17 +54,17 @@ export const Post = new Model("Post", {
   createdAt: Date,
   updatedAt: Date
 });
-Model.index(Post, "urlSlug");
-Model.index(Post, "createdAt");
+schema.index(Post, "urlSlug");
+schema.index(Post, "createdAt");
 
-export const Comment = new Model("Comment", {
+export const Comment = schema.create("Comment", {
   post:      Post,
   author:    User,
   text:      String,
   createdAt: Date
 });
-Model.index(Comment, "post");
-Model.index(Comment, "createdAt");
+schema.index(Comment, "post");
+schema.index(Comment, "createdAt");
 ```
 
 There are a few important moments to consider. Firstly, primary ids are implied.
