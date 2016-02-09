@@ -11,6 +11,8 @@ module.exports = class Schema {
     const record = eval(`class ${name} extends Record {}`);
 
     record.attributes = {id: {type: Number}};
+    record.schema     = this;
+    this.models.push(record);
 
     for (let key in attributes) {
       record.attributes[key] = {type: attributes[key]};

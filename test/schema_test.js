@@ -47,5 +47,13 @@ describe("Schema", () => {
         password: {type: String}
       });
     });
+
+    it("adds the model to the list of schema models", () => {
+      expect(schema.models).to.eql([model]);
+    });
+
+    it("sets the schema reference on the model", () => {
+      expect(model.schema).to.equal(schema);
+    });
   });
 });
