@@ -77,14 +77,46 @@ such by the engine.
 The generic indexes interface should look somewhat like this:
 
 ```js
-const Provider = new Schema(....);
+const schema = new Schema(....);
 
-Provider.index(Model, "field");
-Provider.index(Model, ["field1", "field2"]);
+schema.index(Model, "field");
+schema.index(Model, ["field1", "field2"]);
 ```
 
 Some specific providers might add some extra options that are related to the
 databases they manage.
+
+## Relationships
+
+Relationships between records can be either defined implicitly through attributes
+
+```js
+const User = schema.create("User", {
+  username: String
+});
+
+const Post = schema.create("Post", {
+  title: String,
+  author: User  // <- implicit relationship reference
+});
+```
+
+Or they can be created explicitly with the `schema.belongsTo(...)` method
+
+```js
+const User = schema.create("User", {
+  username: String
+});
+
+const Post = schema.create("Post", {
+  title: String
+});
+
+schema.belongsTo(Post, "author", {type: User});
+```
+
+In both cases we will automatically generate attributes named `referenceId`. In
+this case `authorId` on the referee class.
 
 
 ## Automatic Timestamps

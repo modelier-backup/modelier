@@ -33,7 +33,7 @@ describe("Schema", () => {
     });
 
     it("creates a new Record sub-class", () => {
-      expect(model.prototype.__proto__).to.equal(Record.prototype);
+      expect(model.prototype).to.be.instanceOf(Record);
     });
 
     it("should have the right name", () => {
@@ -54,6 +54,28 @@ describe("Schema", () => {
 
     it("sets the schema reference on the model", () => {
       expect(model.schema).to.equal(schema);
+    });
+  });
+
+  describe("#create(name, attributes) - with a relationship", () => {
+    let User, Post;
+
+    beforeEach(() => {
+      User = schema.create("User", {
+        username: String
+      });
+      Post = schema.create("Post", {
+        title:  String,
+        author: User
+      });
+    });
+
+    it("creates an relationship attributes", () => {
+      expect(Post.attributes).to.eql({
+        id:       {type: Number},
+        title:    {type: String},
+        authorId: {type: Number}
+      });
     });
   });
 });
