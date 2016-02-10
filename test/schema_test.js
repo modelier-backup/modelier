@@ -2,6 +2,7 @@ import { expect } from "chai";
 import Schema from "../src/schema";
 import Connection from "../src/connection";
 import Record from "../src/record";
+import Relationship from "../src/relationship";
 
 describe("Schema", () => {
   let schema;
@@ -37,12 +38,12 @@ describe("Schema", () => {
     });
 
     it("should have the right name", () => {
-      expect(String(model)).to.match(/^class User/);
+      expect(model.name).to.eql("User");
     });
 
     it("should have the right attributes", () => {
       expect(model.attributes).to.eql({
-        id:       {type: Number},
+        id:       {type: String},
         username: {type: String},
         password: {type: String}
       });
@@ -57,7 +58,7 @@ describe("Schema", () => {
     });
   });
 
-  describe("#create(name, attributes) - with a relationship", () => {
+  describe("#create(name, attributes) - with a belongsTo relationship", () => {
     let User, Post;
 
     beforeEach(() => {
@@ -72,19 +73,22 @@ describe("Schema", () => {
 
     it("creates an relationship attributes", () => {
       expect(Post.attributes).to.eql({
-        id:       {type: Number},
+        id:       {type: String},
         title:    {type: String},
-        authorId: {type: Number}
+        authorId: {type: String}
       });
     });
 
     it("creates a `blongsTo` mapping on the model", () => {
-      expect(Post.belongsTo).to.eql({
-        author: {
-          class:      User,
-          foreignKey: "authorId",
-          primaryKey: "id"
-        }
+      expect(Post.relationships).to.eql({
+        author: new Relationship({
+          schema:     schema,
+          name:       "author",
+          type:       "belongs-to",
+          class:      "User",
+          primaryKey: "id",
+          foreignKey: "authorId"
+        })
       });
     });
   });
