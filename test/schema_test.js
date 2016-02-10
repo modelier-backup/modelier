@@ -77,5 +77,15 @@ describe("Schema", () => {
         authorId: {type: Number}
       });
     });
+
+    it("creates a `blongsTo` mapping on the model", () => {
+      expect(Post.belongsTo).to.eql({
+        author: {
+          class:      User,
+          foreignKey: "authorId",
+          primaryKey: "id"
+        }
+      });
+    });
   });
 });

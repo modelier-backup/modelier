@@ -1,5 +1,5 @@
 var Connection = require("./connection");
-var Record     = require("./record"); /* eslint no-unused-vars: 0 */
+var Record     = require("./record");
 
 module.exports = class Schema {
   /**
@@ -31,7 +31,7 @@ module.exports = class Schema {
       const type = attributes[key];
 
       if (type.prototype instanceof Record) {
-        this.belongsTo(model, key, {type: type});
+        this.belongsTo(model, {[key]: type});
       } else {
         model.attributes[key] = {type: type};
       }
@@ -44,12 +44,24 @@ module.exports = class Schema {
    * Creates a belongs-to reference between Record sub-classes
    *
    * @param {Class} child record class
-   * @param {String} the reference name
-   * @param {Object} {type: Class} parent reference and stuff
+   * @param {Object} {attribute: Class} parent reference and stuff
    * @return void
    */
-  belongsTo(model, reference, options) {
-    const type = options.type;
-    model.attributes[`${reference}Id`] = {type: type.attributes.id.type};
+  belongsTo(model, references) {
+    for (let name in references) {
+      const parent     = references[name];
+      const foreignKey = `${name}Id`;
+      const primaryKey = "id";
+
+      model.attributes[foreignKey] = {type: parent.attributes[primaryKey].type};
+
+      model.belongsTo = Object.assign({}, model.belongsTo, {
+        [name]: {
+          class:      parent,
+          foreignKey: foreignKey,
+          primaryKey: primaryKey
+        }
+      });
+    }
   }
 };

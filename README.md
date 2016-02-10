@@ -112,7 +112,7 @@ const Post = schema.create("Post", {
   title: String
 });
 
-schema.belongsTo(Post, "author", {type: User});
+schema.belongsTo(Post, {author: User});
 ```
 
 In both cases we will automatically generate attributes named `referenceId`. In
