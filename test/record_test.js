@@ -1,6 +1,5 @@
 import { expect } from "chai";
-import Record from "../src/record";
-import Query from "../src/query";
+import { Record, Query } from "../src";
 
 describe("Record", () => {
   class User extends Record {

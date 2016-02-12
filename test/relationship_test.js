@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import Relationship from "../src/relationship";
+import { Relationship } from "../src";
 
 describe("Relationship", () => {
   it("converts functions to function names", () => {

@@ -2,7 +2,7 @@
   "name": "modelier",
   "version": "0.0.0",
   "description": "A standard model abstraction",
-  "main": "src/modelier.js",
+  "main": "src/index.js",
   "scripts": {
     "test":      "mocha --compilers js:babel-core/register test/**/*_test.js",
     "lint":      "eslint src test",

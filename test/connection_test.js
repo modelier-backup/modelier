@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import Connection from "../src/connection";
+import { Connection } from "../src";
 
 describe("Connection", () => {
   let connection;

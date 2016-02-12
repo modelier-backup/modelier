@@ -1,8 +1,5 @@
 import { expect } from "chai";
-import Schema from "../src/schema";
-import Connection from "../src/connection";
-import Record from "../src/record";
-import Relationship from "../src/relationship";
+import { Schema, Connection, Record, Relationship } from "../src";
 
 describe("Schema", () => {
   let schema;
