@@ -3,7 +3,11 @@
  *
  */
 module.exports = class Record {
-  constructor() {
+  constructor(attrs) {
+    Object.assign(this, attrs);
+  }
 
+  isSaved() {
+    return !!this.id;
   }
 };
