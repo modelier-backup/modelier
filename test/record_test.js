@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import Record from "../src/record";
+import Query from "../src/query";
 
 describe("Record", () => {
   class User extends Record {
@@ -31,6 +32,25 @@ describe("Record", () => {
     it("returns true if it has an id", () => {
       user.id = "123";
       expect(user.isSaved()).to.be.true;
+    });
+  });
+
+  describe(".filter(params)", () => {
+    let query;
+    beforeEach(() => {
+      query = User.filter({username: "boo"});
+    });
+
+    it("creates a Query", () => {
+      expect(query).to.be.instanceOf(Query);
+    });
+
+    it("referes to the User model", () => {
+      expect(query.model).to.equal(User);
+    });
+
+    it("passes through the conditions", () => {
+      expect(query.conditions).to.eql({username: "boo"});
     });
   });
 });
