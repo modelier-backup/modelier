@@ -155,16 +155,16 @@ Querying in `modelier` consists of basically filters and resolvers
 // to find a record by an ID
 const user = await User.find("12345"); // NOTE: rejects into NotFound
 
-const admins = await User.filter({admin: true}); // or #.all();
-const admin  = await User.filter({admin: true}).first(); // also #last();
+const admins = await User.where({admin: true}); // or #.all();
+const admin  = await User.where({admin: true}).first(); // also #last();
 ```
 
 The `#filter()` method returns an extended `Promise` which has a bunch of
 chained methods to aggregate data:
 
 ```js
-const admins = await User.filter({admin: true}).count();
-const names  = await User.filter({admin: true}).pluck("username");
+const admins = await User.where({admin: true}).count();
+const names  = await User.where({admin: true}).pluck("username");
 ```
 
 __NOTE__ the promise that was returned only trigger the actual query once the
@@ -190,7 +190,7 @@ You also can use the implicit schema references between the models with the
 
 ```js
 const user  = await User.find("12345");
-const posts = await Post.filter({author: user});
+const posts = await Post.where({author: user});
 ```
 
 This will automatically resolve the external key references and build a correct

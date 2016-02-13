@@ -34,10 +34,10 @@ describe("Record", () => {
     });
   });
 
-  describe(".filter(params)", () => {
+  describe(".where(params)", () => {
     let query;
     beforeEach(() => {
-      query = User.filter({username: "boo"});
+      query = User.where({username: "boo"});
     });
 
     it("creates a Query", () => {

@@ -17,9 +17,9 @@ describe("Query", () => {
     });
   });
 
-  describe("#filter(params)", () => {
+  describe("#where(params)", () => {
     let result;
-    beforeEach(() => result = query.filter({username: "nikolay"}));
+    beforeEach(() => result = query.where({username: "nikolay"}));
 
     it("creates a new Query instance", () => {
       expect(result).to.be.instanceOf(Query);
@@ -35,7 +35,7 @@ describe("Query", () => {
     });
 
     it("adds more conditions in sequential calls", () => {
-      expect(result.filter({isAdmin: true}).conditions).to.eql({
+      expect(result.where({isAdmin: true}).conditions).to.eql({
         username: "nikolay", isAdmin: true
       });
     });

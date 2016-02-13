@@ -13,7 +13,7 @@ module.exports = class Record {
     return !!this.id;
   }
 
-  static filter(options) {
-    return new Query(this).filter(options);
+  static where(options) {
+    return new Query(this).where(options);
   }
 };
