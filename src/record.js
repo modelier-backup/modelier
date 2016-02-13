@@ -13,7 +13,15 @@ module.exports = class Record {
     return !!this.id;
   }
 
-  static where(options) {
-    return new Query(this).where(options);
+  static where(conditions) {
+    return new Query(this).where(conditions);
+  }
+
+  static orderBy(field, direction) {
+    return new Query(this).orderBy(field, direction);
+  }
+
+  static groupBy(field) {
+    return new Query(this).groupBy(field);
   }
 };

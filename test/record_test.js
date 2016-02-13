@@ -34,7 +34,7 @@ describe("Record", () => {
     });
   });
 
-  describe(".where(params)", () => {
+  describe(".where(conditions)", () => {
     let query;
     beforeEach(() => {
       query = User.where({username: "boo"});
@@ -49,7 +49,41 @@ describe("Record", () => {
     });
 
     it("passes through the conditions", () => {
-      expect(query.conditions).to.eql({username: "boo"});
+      expect(query.params).to.eql({conditions: {username: "boo"}});
+    });
+  });
+
+  describe(".orderBy(field, direction)", () => {
+    let query;
+    beforeEach(() => query = User.orderBy("username", "desc"));
+
+    it("creates a Query", () => {
+      expect(query).to.be.instanceOf(Query);
+    });
+
+    it("referes to the User model", () => {
+      expect(query.model).to.equal(User);
+    });
+
+    it("passes through the order params", () => {
+      expect(query.params).to.eql({orderBy: [["username", "desc"]]});
+    });
+  });
+
+  describe(".groupBy(field)", () => {
+    let query;
+    beforeEach(() => query = User.groupBy("username"));
+
+    it("creates a Query", () => {
+      expect(query).to.be.instanceOf(Query);
+    });
+
+    it("referes to the User model", () => {
+      expect(query.model).to.equal(User);
+    });
+
+    it("passes through the order params", () => {
+      expect(query.params).to.eql({groupBy: ["username"]});
     });
   });
 });
