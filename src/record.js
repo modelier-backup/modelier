@@ -2,7 +2,8 @@
  * Represents a row record as per activerecord understancing of a record
  *
  */
-var Query = require("./query");
+var Query  = require("./query");
+var Schema = require("./schema");
 
 module.exports = class Record {
   static where(conditions) {
@@ -39,6 +40,10 @@ module.exports = class Record {
 
   static find(id) {
     return new Query(this).where({id: id}).first();
+  }
+
+  static get schema() {
+    return Schema.findFor(this);
   }
 
   constructor(attrs) {

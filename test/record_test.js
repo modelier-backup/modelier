@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Record, Query } from "../src";
+import { Record, Query, Schema } from "../src";
 
 describe("Record", () => {
   class User extends Record {
@@ -8,9 +8,24 @@ describe("Record", () => {
     }
   }
 
-  let user;
+  let user, schema;
   beforeEach(() => {
     user = new User({username: "boo", password: "blah"});
+
+    Schema.instances.splice(0,999); // clear out
+    schema = new Schema({url: "smth://localhost:1234/blah"});
+    schema.create("User", {username: String});
+  });
+
+  describe(".schema", () => {
+    it("returns the reference to the schema that handles the model", () => {
+      expect(User.schema).to.equal(schema);
+    });
+
+    it("blows up when there is no schema regisetered against the model", () => {
+      Schema.instances.splice(0,999); // clear out
+      expect(() => User.schema).to.throw;
+    });
   });
 
   describe("basic instanciation", () => {

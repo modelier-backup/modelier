@@ -1,11 +1,27 @@
 import { expect } from "chai";
-import { Schema, Connection, Record, Relationship } from "../src";
+import { Schema, Connection, Record } from "../src";
 
 describe("Schema", () => {
+  class User extends Record {}
+
   let schema;
 
   beforeEach(() => {
+    Schema.instances.splice(0,999); // clear out
     schema = new Schema({url: "smth://localhost:1234/blah"});
+  });
+
+  describe(".findFor(Model)", () => {
+    it("returns the schema instance that owns the model", () => {
+      schema.create("User", {username: String});
+      expect(Schema.findFor(User)).to.equal(schema);
+    });
+
+    it("blows up when there is no schema registered for the model", () => {
+      expect(() => Schema.findFor(User)).to.throw(
+        "Can't find a schema that owns User!"
+      );
+    });
   });
 
   describe("instance", () => {
@@ -21,72 +37,27 @@ describe("Schema", () => {
     it("has an empty list of models", () => {
       expect(schema.models).to.eql([]);
     });
+
+    it("must be registered in the schema instances registery", () => {
+      expect(Schema.instances).to.eql([schema]);
+    });
+  });
+
+  describe("#owns(Model)", () => {
+    it("says `true` when the model is registered against the schema", () => {
+      schema.create("User", {username: String});
+      expect(schema.owns(User)).to.be.true;
+    });
+
+    it("says `false` when the model is not registered with the schema", () => {
+      expect(schema.owns(User)).to.be.false;
+    });
   });
 
   describe("#create(name, attributes)", () => {
-    let model;
-
-    beforeEach(() => {
-      model = schema.create("User", {username: String, password: String});
-    });
-
-    it("creates a new Record sub-class", () => {
-      expect(model.prototype).to.be.instanceOf(Record);
-    });
-
-    it("should have the right name", () => {
-      expect(model.name).to.eql("User");
-    });
-
-    it("should have the right attributes", () => {
-      expect(model.attributes).to.eql({
-        id:       {type: String},
-        username: {type: String},
-        password: {type: String}
-      });
-    });
-
-    it("adds the model to the list of schema models", () => {
-      expect(schema.models).to.eql([model]);
-    });
-
-    it("sets the schema reference on the model", () => {
-      expect(model.schema).to.equal(schema);
-    });
-  });
-
-  describe("#create(name, attributes) - with a belongsTo relationship", () => {
-    let User, Post;
-
-    beforeEach(() => {
-      User = schema.create("User", {
-        username: String
-      });
-      Post = schema.create("Post", {
-        title:  String,
-        author: User
-      });
-    });
-
-    it("creates an relationship attributes", () => {
-      expect(Post.attributes).to.eql({
-        id:       {type: String},
-        title:    {type: String},
-        authorId: {type: String}
-      });
-    });
-
-    it("creates a `blongsTo` mapping on the model", () => {
-      expect(Post.relationships).to.eql({
-        author: new Relationship({
-          schema:     schema,
-          name:       "author",
-          type:       "belongs-to",
-          class:      "User",
-          primaryKey: "id",
-          foreignKey: "authorId"
-        })
-      });
+    it("saves the name and attributes in the schema", () => {
+      schema.create("User", {username: String});
+      expect(schema.models).to.eql([{name: "User", attributes: {username: String}}]);
     });
   });
 });
