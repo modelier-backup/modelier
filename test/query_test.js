@@ -98,4 +98,40 @@ describe("Query", () => {
       });
     });
   });
+
+  describe("#limit(size)", () => {
+    let result;
+    beforeEach(() => result = query.limit(10));
+
+    it("creates a new Query instance", () => {
+      expect(result).to.be.instanceOf(Query);
+      expect(result).to.not.equal(query);
+    });
+
+    it("keeps the original model reference", () => {
+      expect(result.model).to.equal(query.model);
+    });
+
+    it("adds the order params to the query", () => {
+      expect(result.params).to.eql({limit: 10});
+    });
+  });
+
+  describe("#offset(position)", () => {
+    let result;
+    beforeEach(() => result = query.offset(20));
+
+    it("creates a new Query instance", () => {
+      expect(result).to.be.instanceOf(Query);
+      expect(result).to.not.equal(query);
+    });
+
+    it("keeps the original model reference", () => {
+      expect(result.model).to.equal(query.model);
+    });
+
+    it("adds the order params to the query", () => {
+      expect(result.params).to.eql({offset: 20});
+    });
+  });
 });

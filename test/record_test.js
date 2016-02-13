@@ -86,4 +86,38 @@ describe("Record", () => {
       expect(query.params).to.eql({groupBy: ["username"]});
     });
   });
+
+  describe(".limit(size)", () => {
+    let query;
+    beforeEach(() => query = User.limit(10));
+
+    it("creates a Query", () => {
+      expect(query).to.be.instanceOf(Query);
+    });
+
+    it("referes to the User model", () => {
+      expect(query.model).to.equal(User);
+    });
+
+    it("passes through the order params", () => {
+      expect(query.params).to.eql({limit: 10});
+    });
+  });
+
+  describe(".offset(position)", () => {
+    let query;
+    beforeEach(() => query = User.offset(20));
+
+    it("creates a Query", () => {
+      expect(query).to.be.instanceOf(Query);
+    });
+
+    it("referes to the User model", () => {
+      expect(query.model).to.equal(User);
+    });
+
+    it("passes through the order params", () => {
+      expect(query.params).to.eql({offset: 20});
+    });
+  });
 });

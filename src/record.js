@@ -5,14 +5,6 @@
 var Query = require("./query");
 
 module.exports = class Record {
-  constructor(attrs) {
-    Object.assign(this, attrs);
-  }
-
-  isSaved() {
-    return !!this.id;
-  }
-
   static where(conditions) {
     return new Query(this).where(conditions);
   }
@@ -23,5 +15,21 @@ module.exports = class Record {
 
   static groupBy(field) {
     return new Query(this).groupBy(field);
+  }
+
+  static limit(size) {
+    return new Query(this).limit(size);
+  }
+
+  static offset(position) {
+    return new Query(this).offset(position);
+  }
+
+  constructor(attrs) {
+    Object.assign(this, attrs);
+  }
+
+  isSaved() {
+    return !!this.id;
   }
 };

@@ -23,6 +23,14 @@ module.exports = class Query {
     return new Query(this.model, merge(this.params, {groupBy: newGroup}));
   }
 
+  offset(position) {
+    return new Query(this.model, merge(this.params, {offset: position}));
+  }
+
+  limit(size) {
+    return new Query(this.model, merge(this.params, {limit: size}));
+  }
+
   count() {
     return Promise.resolve(); // TODO make the actual query later
   }
