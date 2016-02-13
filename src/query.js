@@ -34,6 +34,21 @@ module.exports = class Query {
   count() {
     return Promise.resolve(); // TODO make the actual query later
   }
+
+  all() {
+    return Promise.resolve();
+  }
+
+  first() {
+    return this.offset(0).limit(1).then(records => records[0]);
+  }
+
+  last() {
+    return this.count().then(count => {
+      return count === 0 ? null :
+        this.offset(count - 1).limit(1).then(records => records[0]);
+    });
+  }
 };
 
 function merge() {

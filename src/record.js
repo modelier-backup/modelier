@@ -25,6 +25,22 @@ module.exports = class Record {
     return new Query(this).offset(position);
   }
 
+  static all() {
+    return new Query(this).all();
+  }
+
+  static first() {
+    return new Query(this).first();
+  }
+
+  static last() {
+    return new Query(this).last();
+  }
+
+  static find(id) {
+    return new Query(this).where({id: id}).first();
+  }
+
   constructor(attrs) {
     Object.assign(this, attrs);
   }
