@@ -1,4 +1,5 @@
-var Connection   = require("./connection");
+var pluralize  = require("pluralize");
+var Connection = require("./connection");
 
 module.exports = class Schema {
   /**
@@ -42,7 +43,17 @@ module.exports = class Schema {
    * @return {Boolean} check result
    */
   owns(Model) {
-    return this.models.filter(e => e.name === Model.name).length !== 0;
+    return this.getParams(Model) !== undefined;
+  }
+
+  /**
+   * Returns the params thing for a model
+   *
+   * @param {Class} a Record sub-class
+   * @return {Object|undefined} the params
+   */
+  getParams(Model) {
+    return this.models.filter(e => e.name === Model.name)[0];
   }
 
   /**
@@ -55,6 +66,7 @@ module.exports = class Schema {
   create(name, attributes) {
     this.models.push({
       name:       name,
+      table:      pluralize(name.toLowerCase()),
       attributes: attributes
     });
   }

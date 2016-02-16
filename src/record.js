@@ -46,6 +46,10 @@ module.exports = class Record {
     return Schema.findFor(this);
   }
 
+  static get tableName() {
+    return this.schema.getParams(this).table;
+  }
+
   constructor(attrs) {
     Object.assign(this, attrs);
   }

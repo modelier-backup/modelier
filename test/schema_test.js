@@ -54,10 +54,21 @@ describe("Schema", () => {
     });
   });
 
+  describe("#getParams(Model)", () => {
+    it("returns the params hash for a Model when it's registered against the schema", () => {
+      schema.create("User", {username: String});
+      expect(schema.getParams(User)).to.eql({name: "User", table: "users", attributes: {username: String}});
+    });
+
+    it("returns `undefined` when the model is not regestered", () => {
+      expect(schema.getParams(User)).to.be.undefined;
+    });
+  });
+
   describe("#create(name, attributes)", () => {
     it("saves the name and attributes in the schema", () => {
       schema.create("User", {username: String});
-      expect(schema.models).to.eql([{name: "User", attributes: {username: String}}]);
+      expect(schema.models).to.eql([{name: "User", table: "users", attributes: {username: String}}]);
     });
   });
 });

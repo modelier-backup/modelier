@@ -28,6 +28,17 @@ describe("Record", () => {
     });
   });
 
+  describe(".tableName", () => {
+    it("returns the table name for the model registered against the schema", () => {
+      expect(User.tableName).to.eql("users");
+    });
+
+    it("blows up when the model is not registered", () => {
+      Schema.instances.splice(0,999); // clear out
+      expect(() => User.tableName).to.throw;
+    });
+  });
+
   describe("basic instanciation", () => {
     it("assigns the attributes", () => {
       expect(user).to.include({username: "boo", password: "blah"});

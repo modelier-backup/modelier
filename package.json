@@ -4,10 +4,10 @@
   "description": "A standard model abstraction",
   "main": "src/index.js",
   "scripts": {
-    "test":      "mocha --compilers js:babel-core/register test/**/*_test.js",
-    "lint":      "eslint src test",
+    "test": "mocha --compilers js:babel-core/register test/**/*_test.js",
+    "lint": "eslint src test",
     "precommit": "npm run lint",
-    "prepush":   "npm run test"
+    "prepush": "npm run test"
   },
   "keywords": [
     "model",
@@ -21,13 +21,16 @@
   ],
   "author": "Nikolay Nemshilov",
   "license": "MIT",
+  "dependencies": {
+    "pluralize": "^1.2.1"
+  },
   "devDependencies": {
-    "babel-core": "^6.4.5",
+    "babel-core": "^6.5.2",
     "babel-eslint": "^4.1.8",
-    "babel-plugin-syntax-async-functions": "^6.3.13",
-    "babel-plugin-transform-async-to-generator": "^6.4.6",
-    "babel-plugin-transform-es2015-destructuring": "^6.4.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.4.5",
+    "babel-plugin-syntax-async-functions": "^6.5.0",
+    "babel-plugin-transform-async-to-generator": "^6.5.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.5.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.5.2",
     "chai": "^3.5.0",
     "eslint": "^1.10.3",
     "husky": "^0.10.2",
