@@ -1,14 +1,11 @@
 import { expect } from "chai";
+import { fakeConnection } from "./helpers";
 import { Query, Record, Schema } from "../src";
 
 describe("Query", () => {
-  class User extends Record {}
-  const fake_connection = {
-    select: () => new Promise((r) => r([{id: "1", username: "user-1"}, {id: "2", username: "user-2"}])),
-    count:  () => new Promise((r) => r(12))
-  };
-  const schema = new Schema(fake_connection);
+  const schema = new Schema(fakeConnection);
   schema.create("User", {username: String});
+  class User extends Record {}
 
   let query;
   beforeEach(() => query = new Query(User));
@@ -150,7 +147,8 @@ describe("Query", () => {
       const result = await query.all();
       expect(result).to.eql([
         new User({id: "1", username: "user-1"}),
-        new User({id: "2", username: "user-2"})
+        new User({id: "2", username: "user-2"}),
+        new User({id: "3", username: "user-3"})
       ]);
     });
   });
@@ -162,7 +160,7 @@ describe("Query", () => {
 
     it("resolves into a number from the connection", async () => {
       const result = await query.count();
-      expect(result).to.eql(12);
+      expect(result).to.eql(new Number(3));
     });
   });
 
@@ -182,10 +180,9 @@ describe("Query", () => {
       expect(query.last()).to.be.instanceOf(Promise);
     });
 
-    it("resolves the promise into the first record", async () => {
+    it("resolves the promise into the last record", async () => {
       const result = await query.last();
-      // NOTE the fake connection is not smart enough, it will return the first record
-      expect(result).to.eql(new User({id: "1", username: "user-1"}));
+      expect(result).to.eql(new User({id: "3", username: "user-3"}));
     });
   });
 });

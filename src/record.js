@@ -26,6 +26,10 @@ module.exports = class Record {
     return new Query(this).offset(position);
   }
 
+  static find(id) {
+    return new Query(this).where({id: id}).first();
+  }
+
   static all() {
     return new Query(this).all();
   }
@@ -36,10 +40,6 @@ module.exports = class Record {
 
   static last() {
     return new Query(this).last();
-  }
-
-  static find(id) {
-    return new Query(this).where({id: id}).first();
   }
 
   static get schema() {
