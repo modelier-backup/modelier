@@ -1,8 +1,14 @@
 import { expect } from "chai";
-import { Query, Record } from "../src";
+import { Query, Record, Schema } from "../src";
 
 describe("Query", () => {
   class User extends Record {}
+  const fake_connection = {
+    select: () => new Promise((r) => r([{id: "1", username: "user-1"}, {id: "2", username: "user-2"}])),
+    count:  () => new Promise((r) => r(12))
+  };
+  const schema = new Schema(fake_connection);
+  schema.create("User", {username: String});
 
   let query;
   beforeEach(() => query = new Query(User));
@@ -132,6 +138,54 @@ describe("Query", () => {
 
     it("adds the order params to the query", () => {
       expect(result.params).to.eql({offset: 20});
+    });
+  });
+
+  describe("#all()", () => {
+    it("returns a promise", () => {
+      expect(query.all()).to.be.instanceOf(Promise);
+    });
+
+    it("resolves the promise into a list of models", async () => {
+      const result = await query.all();
+      expect(result).to.eql([
+        new User({id: "1", username: "user-1"}),
+        new User({id: "2", username: "user-2"})
+      ]);
+    });
+  });
+
+  describe("#count()", () => {
+    it("returns a promise", () => {
+      expect(query.count()).to.be.instanceOf(Promise);
+    });
+
+    it("resolves into a number from the connection", async () => {
+      const result = await query.count();
+      expect(result).to.eql(12);
+    });
+  });
+
+  describe("#first()", () => {
+    it("returns a promise", () => {
+      expect(query.first()).to.be.instanceOf(Promise);
+    });
+
+    it("resolves the promise into the first record", async () => {
+      const result = await query.first();
+      expect(result).to.eql(new User({id: "1", username: "user-1"}));
+    });
+  });
+
+  describe("#last()", () => {
+    it("returns a promise", () => {
+      expect(query.last()).to.be.instanceOf(Promise);
+    });
+
+    it("resolves the promise into the first record", async () => {
+      const result = await query.last();
+      // NOTE the fake connection is not smart enough, it will return the first record
+      expect(result).to.eql(new User({id: "1", username: "user-1"}));
     });
   });
 });
