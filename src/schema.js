@@ -1,5 +1,4 @@
 var pluralize  = require("pluralize");
-var Connection = require("./connection");
 
 module.exports = class Schema {
   /**
@@ -26,11 +25,11 @@ module.exports = class Schema {
   /**
    * Basic constructor
    *
-   * @param {Object} connection options
+   * @param {Object} connection instance
    * @return void
    */
-  constructor(options) {
-    this.connection = new Connection(options);
+  constructor(connection) {
+    this.connection = connection;
     this.models     = [];
 
     Schema.instances.push(this);

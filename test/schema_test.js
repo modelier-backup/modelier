@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Schema, Connection, Record } from "../src";
+import { Schema, Record } from "../src";
 
 describe("Schema", () => {
   class User extends Record {}
@@ -30,8 +30,7 @@ describe("Schema", () => {
     });
 
     it("has a connection object stuck with it", () => {
-      expect(schema.connection).to.be.instanceOf(Connection);
-      expect(schema.connection.options).to.eql({url: "smth://localhost:1234/blah"});
+      expect(schema.connection).to.eql({url: "smth://localhost:1234/blah"});
     });
 
     it("has an empty list of models", () => {
