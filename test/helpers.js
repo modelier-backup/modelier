@@ -40,6 +40,43 @@ export class FakeConnection {
     });
   }
 
+  insert(q, params) {
+    this.queries.push(`INSERT INTO ${q.model.tableName} ${hashToClauses(params).join(", ")}`);
+
+    return new Promise((resolve) => {
+      const new_record = Object.assign({id: String(this.records.length + 1)}, params);
+      this.records.push(new_record);
+      resolve([new_record]);
+    });
+  }
+
+  update(q, params) {
+    return this.select(q).then(records => {
+      this.queries.push(`UPDATE ${q.model.tableName} SET ${hashToClauses(params).join(", ")}${conditions(q)}`);
+
+      records.forEach(entry => {
+        for (let key in params) {
+          entry[key] = params[key];
+        }
+      });
+
+      return "Ok";
+    });
+  }
+
+  delete(q) {
+    return this.select(q).then(records => {
+      this.queries.push(`DELETE FROM ${q.model.tableName}${conditions(q)}`);
+
+      records.forEach(record => {
+        const index = this.records.indexOf(record);
+        this.records.splice(index, 1);
+      });
+
+      return "Ok";
+    });
+  }
+
   get queries() {
     return this._queries = this._queries || [];
   }
@@ -55,12 +92,7 @@ function conditions(q) {
   const { conditions, offset, limit } = q.params;
 
   if (conditions) {
-    let wheres = [];
-
-    for (let key in conditions) {
-      wheres.push(`${key}='${conditions[key]}'`);
-    }
-    clauses += ` WHERE ${wheres.join(" AND ")}`;
+    clauses += ` WHERE ${hashToClauses(conditions).join(" AND ")}`;
   }
 
   if (offset !== undefined) {
@@ -69,6 +101,16 @@ function conditions(q) {
 
   if (limit !== undefined) {
     clauses += ` LIMIT ${limit}`;
+  }
+
+  return clauses;
+}
+
+function hashToClauses(hash) {
+  const clauses = [];
+
+  for (let key in hash) {
+    clauses.push(`${key}='${hash[key]}'`);
   }
 
   return clauses;

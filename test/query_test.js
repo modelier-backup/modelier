@@ -2,12 +2,18 @@ import { expect, FakeConnection } from "./helpers";
 import { Query, Record, Schema } from "../src";
 
 describe("Query", () => {
-  const schema = new Schema(new FakeConnection());
-  schema.create("User", {username: String});
+  let connection, schema, query;
   class User extends Record {}
 
-  let query;
-  beforeEach(() => query = new Query(User));
+  beforeEach(() => {
+    Schema.instances.splice(0,999); // clear out
+
+    connection = new FakeConnection();
+    schema     = new Schema(connection);
+
+    schema.create("User", {username: String});
+    query = new Query(User);
+  });
 
   describe("instance", () => {
     it("has a reference to the model", () => {
@@ -182,6 +188,61 @@ describe("Query", () => {
     it("resolves the promise into the last record", async () => {
       const result = await query.last();
       expect(result).to.eql(new User({id: "3", username: "user-3"}));
+    });
+  });
+
+  describe("#insert()", () => {
+    it("returns a promise", () => {
+      expect(query.insert({username: "Nikolay"})).to.be.instanceOf(Promise);
+    });
+
+    it("returns a new record", async () => {
+      const user = await query.insert({username: "nikolay"});
+      expect(user).to.eql([
+        new User({id: "4", username: "nikolay"})
+      ]);
+    });
+
+    it("makes the right call into the database", async () => {
+      await query.insert({username: "nikolay"});
+      expect(connection.lastQuery).to.eql(
+        "INSERT INTO users username='nikolay'"
+      );
+    });
+  });
+
+  describe("#update(params)", () => {
+    it("returns a promise", () => {
+      expect(query.update({username: "boo"})).to.be.instanceOf(Promise);
+    });
+
+    it("resolves into 'Ok'", async () => {
+      const result = await query.update({username: "boo"});
+      expect(result).to.be.eql("Ok");
+    });
+
+    it("makes the right query to the database", async () => {
+      await query.update({username: "boo"});
+      expect(connection.lastQuery).to.eql(
+        "UPDATE users SET username='boo'"
+      );
+    });
+  });
+
+  describe("#delete()", () => {
+    it('returns a promise', () => {
+      expect(query.delete()).to.be.instanceOf(Promise);
+    });
+
+    it("resolves into 'Ok'", async () => {
+      expect(await query.delete()).to.eql("Ok");
+    });
+
+    it("makes the right query to the database", async () => {
+      await query.delete();
+      expect(connection.lastQuery).to.eql(
+        "DELETE FROM users"
+      );
     });
   });
 });

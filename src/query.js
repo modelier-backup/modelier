@@ -52,6 +52,20 @@ module.exports = class Query {
     });
   }
 
+  insert(params) {
+    return this.connection.insert(this, params).then(records => {
+      return records.map(r => new this.model(r));
+    });
+  }
+
+  update(params) {
+    return this.connection.update(this, params);
+  }
+
+  delete() {
+    return this.connection.delete(this);
+  }
+
 // privateish
 
   get connection() {
