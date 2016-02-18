@@ -42,13 +42,13 @@ module.exports = class Query {
   }
 
   first() {
-    return this.offset(0).limit(1).all().then(records => records[0]);
+    return this.offset(0).limit(1).all().then(records => records[0] || null);
   }
 
   last() {
     return this.count().then(count => {
       return count === 0 ? null :
-        this.offset(count - 1).limit(1).all().then(records => records[0]);
+        this.offset(count - 1).limit(1).all().then(records => records[0] || null);
     });
   }
 

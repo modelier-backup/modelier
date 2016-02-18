@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect, FakeConnection } from "./helpers";
 import { Record, Query, Schema } from "../src";
 
 describe("Record", () => {
@@ -8,12 +8,13 @@ describe("Record", () => {
     }
   }
 
-  let user, schema;
+  let user, schema, connection;
   beforeEach(() => {
     user = new User({username: "boo", password: "blah"});
 
+    connection = new FakeConnection();
     Schema.instances.splice(0,999); // clear out
-    schema = new Schema({url: "smth://localhost:1234/blah"});
+    schema = new Schema(connection);
     schema.create("User", {username: String});
   });
 
@@ -36,6 +37,71 @@ describe("Record", () => {
     it("blows up when the model is not registered", () => {
       Schema.instances.splice(0,999); // clear out
       expect(() => User.tableName).to.throw;
+    });
+  });
+
+  describe(".find(id)", () => {
+    it("finds a record by an ID", async () => {
+      const user = await User.find(1);
+      expect(user).to.eql(new User({id: "1", username: "user-1"}));
+    });
+
+    it("resolves to `null` if a record doesn't exist", async () => {
+      const user = await User.find("nothing");
+      expect(user).to.be.null;
+    });
+
+    it("sends the right database query", async () => {
+      await User.find("smth");
+      expect(connection.lastQuery).to.eql(
+        "SELECT * FROM users WHERE id='smth' OFFSET 0 LIMIT 1"
+      );
+    });
+  });
+
+  describe(".all()", () => {
+    it("extracts all the records", async () => {
+      const result = await User.all();
+      expect(result).to.eql([
+        new User({id: "1", username: "user-1"}),
+        new User({id: "2", username: "user-2"}),
+        new User({id: "3", username: "user-3"})
+      ]);
+    });
+
+    it("makes the right query to the database", async () => {
+      await User.offset(0).limit(2).all();
+      expect(connection.lastQuery).to.eql(
+        "SELECT * FROM users OFFSET 0 LIMIT 2"
+      );
+    });
+  });
+
+  describe(".first()", () => {
+    it("extracts the first record in the database", async () => {
+      const user = await User.first();
+      expect(user).to.eql(new User({id: "1", username: "user-1"}));
+    });
+
+    it("makes the right database request", async () => {
+      await User.first();
+      expect(connection.lastQuery).to.eql(
+        "SELECT * FROM users OFFSET 0 LIMIT 1"
+      );
+    });
+  });
+
+  describe(".last()", () => {
+    it("extracts the last record in the database", async () => {
+      const user = await User.last();
+      expect(user).to.eql(new User({id: "3", username: "user-3"}));
+    });
+
+    it("makes the right database request", async () => {
+      await User.last();
+      expect(connection.lastQuery).to.eql(
+        "SELECT * FROM users OFFSET 2 LIMIT 1"
+      );
     });
   });
 

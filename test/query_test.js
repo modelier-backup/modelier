@@ -1,9 +1,8 @@
-import { expect } from "chai";
-import { fakeConnection } from "./helpers";
+import { expect, FakeConnection } from "./helpers";
 import { Query, Record, Schema } from "../src";
 
 describe("Query", () => {
-  const schema = new Schema(fakeConnection);
+  const schema = new Schema(new FakeConnection());
   schema.create("User", {username: String});
   class User extends Record {}
 
@@ -160,7 +159,7 @@ describe("Query", () => {
 
     it("resolves into a number from the connection", async () => {
       const result = await query.count();
-      expect(result).to.eql(new Number(3));
+      expect(result).to.eql(3);
     });
   });
 

@@ -27,7 +27,7 @@ module.exports = class Record {
   }
 
   static find(id) {
-    return new Query(this).where({id: id}).first();
+    return new Query(this).where({id: String(id)}).first();
   }
 
   static all() {
