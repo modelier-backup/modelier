@@ -65,4 +65,14 @@ module.exports = class Record {
   isSaved() {
     return !!this.id;
   }
+
+  update(params) {
+    return new Query(this.constructor).where({id: this.id})
+      .update(params).then(() => Object.assign(this, params));
+  }
+
+  delete() {
+    return new Query(this.constructor).where({id: this.id})
+      .delete().then(() => this);
+  }
 };

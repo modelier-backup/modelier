@@ -252,4 +252,41 @@ describe("Record", () => {
       );
     });
   });
+
+  describe("#update(params)", () => {
+    beforeEach(() => user.id = "user-1");
+
+    it("sets the new params on a record", async () => {
+      await user.update({username: "nikolay"});
+      expect(user.username).to.eql("nikolay");
+    });
+
+    it("yelds the record back", async () => {
+      const result = await user.update({username: "nikolay"});
+      expect(result).to.equal(user);
+    });
+
+    it("runs the right query on the database", async () => {
+      await user.update({username: "nikolay"});
+      expect(connection.lastQuery).to.eql(
+        "UPDATE users SET username='nikolay' WHERE id='user-1'"
+      );
+    });
+  });
+
+  describe("#delete()", () => {
+    beforeEach(() => user.id = "user-1");
+
+    it("yelds back the record itself", async () => {
+      const result = await user.delete();
+      expect(result).to.equal(user);
+    });
+
+    it("runs the right query on the database", async () => {
+      await user.delete();
+      expect(connection.lastQuery).to.eql(
+        "DELETE FROM users WHERE id='user-1'"
+      );
+    });
+  });
 });
