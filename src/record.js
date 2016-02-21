@@ -58,7 +58,27 @@ module.exports = class Record {
     return this.schema.getParams(this).table;
   }
 
+  static get attributes() {
+    return this.schema.getParams(this).attributes;
+  }
+
   constructor(attrs) {
+    this.attributes = attrs;
+  }
+
+  get attributes() {
+    const attrs = {};
+
+    for (let name in this.constructor.attributes) {
+      if (Object.hasOwnProperty.call(this, name)) {
+        attrs[name] = this[name];
+      }
+    }
+
+    return attrs;
+  }
+
+  set attributes(attrs) {
     Object.assign(this, attrs);
   }
 
@@ -67,12 +87,11 @@ module.exports = class Record {
   }
 
   update(params) {
-    return new Query(this.constructor).where({id: this.id})
-      .update(params).then(() => Object.assign(this, params));
+    this.attributes = Object.assign({}, this.attributes, params);
+    return new Query(this.constructor).where({id: this.id}).update(params).then(() => this);
   }
 
   delete() {
-    return new Query(this.constructor).where({id: this.id})
-      .delete().then(() => this);
+    return new Query(this.constructor).where({id: this.id}).delete().then(() => this);
   }
 };

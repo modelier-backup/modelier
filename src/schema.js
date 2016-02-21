@@ -66,7 +66,17 @@ module.exports = class Schema {
     this.models.push({
       name:       name,
       table:      pluralize(name.toLowerCase()),
-      attributes: attributes
+      attributes: build_attributes_config(attributes)
     });
   }
 };
+
+function build_attributes_config(params) {
+  const attrs = {id: {type: String}};
+
+  for (var name in params) {
+    attrs[name] = {type: params[name]};
+  }
+
+  return attrs;
+}

@@ -40,6 +40,15 @@ describe("Record", () => {
     });
   });
 
+  describe(".attributes", () => {
+    it("returns the model attributes config", () => {
+      expect(User.attributes).to.eql({
+        id:       {type: String},
+        username: {type: String}
+      });
+    });
+  });
+
   describe(".find(id)", () => {
     it("finds a record by an ID", async () => {
       const user = await User.find(1);
@@ -102,27 +111,6 @@ describe("Record", () => {
       expect(connection.lastQuery).to.eql(
         "SELECT * FROM users OFFSET 2 LIMIT 1"
       );
-    });
-  });
-
-  describe("basic instanciation", () => {
-    it("assigns the attributes", () => {
-      expect(user).to.include({username: "boo", password: "blah"});
-    });
-
-    it("is JSON exportable", () => {
-      expect(JSON.stringify(user)).to.eql('{"username":"boo","password":"blah"}');
-    });
-  });
-
-  describe("#isSaved()", () => {
-    it("returns false if the user doesn't have an id", () => {
-      expect(user.isSaved()).to.be.false;
-    });
-
-    it("returns true if it has an id", () => {
-      user.id = "123";
-      expect(user.isSaved()).to.be.true;
     });
   });
 
@@ -250,6 +238,56 @@ describe("Record", () => {
       expect(connection.lastQuery).to.eql(
         "DELETE FROM users WHERE admin=true"
       );
+    });
+  });
+
+  describe("basic instanciation", () => {
+    it("assigns the attributes", () => {
+      expect(user).to.include({username: "boo", password: "blah"});
+    });
+
+    it("is JSON exportable", () => {
+      expect(JSON.stringify(user)).to.eql('{"username":"boo","password":"blah"}');
+    });
+  });
+
+  describe("#isSaved()", () => {
+    it("returns false if the user doesn't have an id", () => {
+      expect(user.isSaved()).to.be.false;
+    });
+
+    it("returns true if it has an id", () => {
+      user.id = "123";
+      expect(user.isSaved()).to.be.true;
+    });
+  });
+
+  describe("#attributes", () => {
+    it("returns an object with attributes that are currently set on the model", () => {
+      user.id = "12345";
+      expect(user.attributes).to.eql({
+        id:       "12345",
+        username: "boo"
+      });
+    });
+
+    it("skips on any arbitrary properties that are not defined in the model schema", () => {
+      user.arbitraryAttrs = "blah!";
+      expect(user.attributes).to.eql({username: "boo"});
+    });
+  });
+
+  describe("#attributes = smth", () => {
+    it("sets the new attributes on a model", () => {
+      user.attributes = {username: "nikolay", id: "new-id"};
+      expect(user.id).to.eql("new-id");
+      expect(user.username).to.eql("nikolay");
+    });
+
+    it.skip("resets the missing attributes", () => {
+      user.attributes = {id: "new-id"};
+      expect(user.id).to.eql("new-id");
+      expect(user.username).to.be.undefined;
     });
   });
 
