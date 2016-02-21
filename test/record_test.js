@@ -212,4 +212,44 @@ describe("Record", () => {
       expect(query.params).to.eql({offset: 20});
     });
   });
+
+  describe(".update(params)", () => {
+    it("yelds 'Ok'", async () => {
+      expect(await User.update({admin: true})).to.eql("Ok");
+    });
+
+    it("runs the right query on the connection", async () => {
+      await User.update({username: "blah", admin: false});
+      expect(connection.lastQuery).to.eql(
+        "UPDATE users SET username='blah', admin=false"
+      );
+    });
+
+    it("allows to nest params", async () => {
+      await User.where({admin: true}).update({username: "nikolay"});
+      expect(connection.lastQuery).to.eql(
+        "UPDATE users SET username='nikolay' WHERE admin=true"
+      );
+    });
+  });
+
+  describe(".delete()", () => {
+    it("resolves into 'Ok'", async () => {
+      expect(await User.delete()).to.eql("Ok");
+    });
+
+    it("runs the right query on the connection", async () => {
+      await User.delete();
+      expect(connection.lastQuery).to.eql(
+        "DELETE FROM users"
+      );
+    });
+
+    it("allows to nest params", async () => {
+      await User.where({admin: true}).delete();
+      expect(connection.lastQuery).to.eql(
+        "DELETE FROM users WHERE admin=true"
+      );
+    });
+  });
 });

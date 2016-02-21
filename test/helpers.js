@@ -110,7 +110,9 @@ function hashToClauses(hash) {
   const clauses = [];
 
   for (let key in hash) {
-    clauses.push(`${key}='${hash[key]}'`);
+    clauses.push(`${key}=${
+      typeof(hash[key]) === "boolean" ? hash[key] : `'${hash[key]}'`
+    }`);
   }
 
   return clauses;

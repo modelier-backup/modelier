@@ -42,6 +42,14 @@ module.exports = class Record {
     return new Query(this).last();
   }
 
+  static update(params) {
+    return new Query(this).update(params);
+  }
+
+  static delete() {
+    return new Query(this).delete();
+  }
+
   static get schema() {
     return Schema.findFor(this);
   }
