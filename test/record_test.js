@@ -9,13 +9,14 @@ describe("Record", () => {
   }
 
   let user, schema, connection;
-  beforeEach(() => {
-    user = new User({username: "boo", password: "blah"});
 
+  beforeEach(() => {
     connection = new FakeConnection();
     Schema.instances.splice(0,999); // clear out
     schema = new Schema(connection);
     schema.create("User", {username: String});
+
+    user = new User({username: "boo", password: "blah"});
   });
 
   describe(".schema", () => {
@@ -284,7 +285,7 @@ describe("Record", () => {
       expect(user.username).to.eql("nikolay");
     });
 
-    it.skip("resets the missing attributes", () => {
+    it("resets the missing attributes", () => {
       user.attributes = {id: "new-id"};
       expect(user.id).to.eql("new-id");
       expect(user.username).to.be.undefined;

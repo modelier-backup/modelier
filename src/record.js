@@ -80,6 +80,12 @@ module.exports = class Record {
 
   set attributes(attrs) {
     Object.assign(this, attrs);
+
+    for (let name in this.constructor.attributes) {
+      if (!Object.hasOwnProperty.call(attrs, name)) {
+        delete(this[name]);
+      }
+    }
   }
 
   isSaved() {
