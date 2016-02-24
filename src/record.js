@@ -42,6 +42,10 @@ module.exports = class Record {
     return new Query(this).last();
   }
 
+  static create(params) {
+    return new Query(this).insert(params).then(records => records[0]);
+  }
+
   static update(params) {
     return new Query(this).update(params);
   }
@@ -92,9 +96,21 @@ module.exports = class Record {
     return !!this.id;
   }
 
+  save() {
+    const params = Object.assign({}, this.attributes);
+    const query  = new Query(this.constructor);
+
+    if (this.isSaved()) {
+      delete(params.id);
+      return query.where({id: this.id}).update(params).then(() => this);
+    } else {
+      return query.insert(params).then(() => this);
+    }
+  }
+
   update(params) {
     this.attributes = Object.assign({}, this.attributes, params);
-    return new Query(this.constructor).where({id: this.id}).update(params).then(() => this);
+    return this.save();
   }
 
   delete() {

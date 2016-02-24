@@ -202,8 +202,22 @@ describe("Record", () => {
     });
   });
 
+  describe(".create(params)", () => {
+    it("yields a new record", async () => {
+      const result = await User.create({username: "nikolay"});
+      expect(result).to.eql(new User({id: "4", username: "nikolay"}));
+    });
+
+    it("runs the right query on the database", async () => {
+      await User.create({username: "nikolay"});
+      expect(connection.lastQuery).to.eql(
+        "INSERT INTO users username='nikolay'"
+      );
+    });
+  });
+
   describe(".update(params)", () => {
-    it("yelds 'Ok'", async () => {
+    it("yields 'Ok'", async () => {
       expect(await User.update({admin: true})).to.eql("Ok");
     });
 
@@ -289,6 +303,41 @@ describe("Record", () => {
       user.attributes = {id: "new-id"};
       expect(user.id).to.eql("new-id");
       expect(user.username).to.be.undefined;
+    });
+  });
+
+  describe("#save()", () => {
+    describe("on a new record", () => {
+      it("yields the instance back", async () => {
+        const result = await user.save();
+        expect(result).to.equal(user);
+      });
+
+      it("runs an INSERT query on the databse", async () => {
+        await user.save();
+        expect(connection.lastQuery).to.eql(
+          "INSERT INTO users username='boo'"
+        );
+      });
+    });
+
+    describe("on an existing record", () => {
+      beforeEach(() => {
+        user.id       = "123";
+        user.username = "new nikolay";
+      });
+
+      it("it yelds the instance back", async () => {
+        const result = await user.save();
+        expect(result).to.equal(user);
+      });
+
+      it("runs an update query on the database", async () => {
+        await user.save();
+        expect(connection.lastQuery).to.eql(
+          "UPDATE users SET username='new nikolay' WHERE id='123'"
+        );
+      });
     });
   });
 
