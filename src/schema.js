@@ -1,4 +1,5 @@
-var pluralize  = require("pluralize");
+const pluralize    = require("pluralize");
+const Relationship = require("./relationship");
 
 module.exports = class Schema {
   /**
@@ -64,19 +65,59 @@ module.exports = class Schema {
    */
   create(name, attributes) {
     this.models.push({
-      name:       name,
-      table:      pluralize(name.toLowerCase()),
-      attributes: build_attributes_config(attributes)
+      name:          name,
+      table:         pluralize(name.toLowerCase()),
+      attributes:    build_attributes_config(attributes),
+      relationships: build_relationships(attributes)
     });
   }
 };
 
+/**
+ * Converts schema params into a set of attributes with types
+ *
+ * @param {Object} raw user defined schema attributes
+ * @return {Object} normalized list of attributes
+ */
 function build_attributes_config(params) {
   const attrs = {id: {type: String}};
 
-  for (var name in params) {
-    attrs[name] = {type: params[name]};
+  for (let name in params) {
+    const type = params[name];
+
+    if (typeof(type) === "string") {
+      // a belongs-to reference
+      attrs[`${name}Id`] = {type: String};
+    } else {
+      attrs[name] = {type: type};
+    }
   }
 
   return attrs;
+}
+
+/**
+ * Builds the relationships config from the params
+ *
+ * @param {Object} raw user defined schema attributes
+ * @return {Object} a normalized relationships schema
+ */
+function build_relationships(params) {
+  const rels = {};
+
+  for (let name in params) {
+    const type = params[name];
+
+    if (typeof(type) === "string") {
+      // consider this a belongs-to reference
+      rels[name] = new Relationship({
+        type:       "belongs-to",
+        model:      params[name],
+        primaryKey: "id",
+        foreignKey: `${name}Id`
+      });
+    }
+  }
+
+  return rels;
 }

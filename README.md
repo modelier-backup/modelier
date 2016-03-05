@@ -2,8 +2,12 @@
 
 __NOTE__: work in progress! this is not a thing yet!
 
+There are so many awesome databases out there! Yet, there are really just a few
+ways to use them from an application code. We need to query records based on a
+criteria, we need to insert records, we need to update them, and delete them.
+
 This is an attempt to define a somewhat standard interface to create the model
-part of a system. In a sense it is kind of an abstract of the
+part of a system. In a sense it is kind of an abstract implementation of the
 [active record](https://en.wikipedia.org/wiki/Active_record_pattern) married
 with `Promise` and decoupled from the actual persistence layer.
 

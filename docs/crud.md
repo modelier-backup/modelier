@@ -15,7 +15,6 @@ There are also a set of similar operations that can be performed on a whole tabl
 ```js
 await User.update({admin: true}); // make _everyone_ an admin
 await User.delete(); // delete everything
-
 ```
 
 __NOTE__: the table level operations are combinable with the query filters, see

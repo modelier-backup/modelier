@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Schema, Record } from "../src";
+import { Schema, Record, Relationship } from "../src";
 
 describe("Schema", () => {
   class User extends Record {}
@@ -74,6 +74,39 @@ describe("Schema", () => {
           attributes: {
             id:       {type: String},
             username: {type: String}
+          },
+          relationships: {}
+        }
+      ]);
+    });
+
+    it("handles the belongsTo references", () => {
+      schema.create("User", {username: String});
+      schema.create("Post", {text: String, author: "User"});
+      expect(schema.models).to.eql([
+        {
+          name: "User",
+          table: "users",
+          attributes: {
+            id:       {type: String},
+            username: {type: String}
+          },
+          relationships: {}
+        }, {
+          name: "Post",
+          table: "posts",
+          attributes: {
+            id:       {type: String},
+            text:     {type: String},
+            authorId: {type: String}
+          },
+          relationships: {
+            author: new Relationship({
+              type:       "belongs-to",
+              model:      "User",
+              primaryKey: "id",
+              foreignKey: "authorId"
+            })
           }
         }
       ]);

@@ -2,8 +2,8 @@
  * Represents a row record as per activerecord understancing of a record
  *
  */
-var Query  = require("./query");
-var Schema = require("./schema");
+const Query  = require("./query");
+const Schema = require("./schema");
 
 module.exports = class Record {
   static where(conditions) {

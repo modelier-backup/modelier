@@ -1,93 +1,85 @@
 # Modelier: Schemaing
 
-__NOTE__ this is a slightly outdated version of the docs
+In `modelier` terms a `schema` means basically a config that shows how your
+models are reflected in the actual database layer. It defines the property types,
+relationships, indexes and such.
 
-In `modelier` there is an idea of I call `schema`. This thing is basically your
-mapping to the persistence layer. It is not supposed to have any actual business
-logic of your application. A schema simply outlines units persisted properties
-and relationships between each other.
+Lets pretend you have two models:
 
 ```js
-import { Schema } from "modelier-mongodb";
-const schema = new Schema({ url: "mongodb://localhost..."  });
+import { Record } from "modelier";
 
-export const User = schema.create("User", {
-  email:     String,
-  username:  String,
-  password:  String,
-  createdAt: Date,
-  updatedAt: Date
+export class User extends Record {
+}
+
+export class Post extends Record {
+}
+```
+
+Now, if you wish to persist those objects say in a `mongodb` database, you should
+have a schema that looks somewhat like this:
+
+```js
+import { Connection } from "modelier-mongodb";
+import { Schema } from "modelier";
+
+const mongo  = new Connection("mongodb://localhost:27017/my-database");
+const schema = new Schema(mongo);
+
+schema.create("User", {
+  username: String,
+  password: String
 });
-schema.index(User, "username");
 
-export const Post = schema.create("Post", {
-  urlSlug:   String,
+schema.create("Post", {
   title:     String,
-  body:      String,
-  author:    User,    // <- direct association
-  createdAt: Date,
-  updatedAt: Date
-});
-schema.index(Post, "urlSlug");
-schema.index(Post, "createdAt");
-
-export const Comment = schema.create("Comment", {
-  post:      Post,
-  author:    User,
   text:      String,
+  author:    "User", // <- a belongs-to reference
   createdAt: Date
 });
-schema.index(Comment, "post");
-schema.index(Comment, "createdAt");
 ```
 
-There are a few important moments to consider. Firstly, primary ids are implied.
-Same for relationship references, they should be done on a model to model basis
-and actual references should be consistently auto-generated into `authorId` and
-such by the engine.
+There are several points to remember when you define your schema:
 
-## Indexes
+1. Model class names must be unique throughout an app
+2. A schema must refer to those class names as strings when you need to specify
+   a persistence config or a relationship.
+3. Primary keys should not be specified; `modelier` will handle those automatically.
+   This likely be a subject to configuration later, but generally considered a
+   bad practice.
+4. Foreign keys for model relationships also should not be specified manually.
+   Instead use `property -> "Model"` references and let `modeler` handle relationships
+   for you. Again, this will be a subject to a configuration later on, but generally
+   considered to be against the best practices.
 
-The generic indexes interface should look somewhat like this:
-
-```js
-const schema = new Schema(....);
-
-schema.index(Model, "field");
-schema.index(Model, ["field1", "field2"]);
-```
-
-Some specific providers might add some extra options that are related to the
-databases they manage.
 
 ## Relationships
 
-Relationships between records can be either defined implicitly through attributes
+`Modelier` is built with an automatic relationships handling in mind. This allows
+us to create a much more robust usage flows that enable things like, optimistic
+and lazy loads, search by references, even a transparent connection of several
+different databases in the same application codebase.
+
+### Belongs-To
+
+When you need to specify a `belongs-to` type of a relationship, simply use a
+_string_ model name as the type reference on a property, for example:
 
 ```js
-const User = schema.create("User", {
-  username: String
+schema.create("User", {
+  name: String
 });
-
-const Post = schema.create("Post", {
-  title: String,
-  author: User  // <- implicit relationship reference
+schema.create("Post", {
+  author: "User"
+  /* other props */
 });
 ```
 
-Or they can be created explicitly with the `schema.belongsTo(...)` method
+This configuration will automatically add the `authorId` attribute on the `Post`
+model and treat it as a foreign key in all consequent operations with the database.
+This also enables the `Post` model to search through the associated model. For
+example:
 
 ```js
-const User = schema.create("User", {
-  username: String
-});
-
-const Post = schema.create("Post", {
-  title: String
-});
-
-schema.belongsTo(Post, {author: User});
+const nikolays_posts = await Post.where({author: {name: "Nikolay"}}).all();
 ```
-
-In both cases we will automatically generate attributes named `referenceId`. In
-this case `authorId` on the referee class.
