@@ -67,8 +67,8 @@ module.exports = class Schema {
     this.models.push({
       name:          name,
       table:         pluralize(name.toLowerCase()),
-      attributes:    build_attributes_config(attributes),
-      relationships: build_relationships(attributes)
+      attributes:    build_attributes_config(name, attributes),
+      relationships: build_relationships(name, attributes)
     });
   }
 };
@@ -76,19 +76,21 @@ module.exports = class Schema {
 /**
  * Converts schema params into a set of attributes with types
  *
+ * @param {String} the model name
  * @param {Object} raw user defined schema attributes
  * @return {Object} normalized list of attributes
  */
-function build_attributes_config(params) {
+function build_attributes_config(model, params) {
   const attrs = {id: {type: String}};
 
   for (let name in params) {
     const type           = params[name];
     const belongs_to_ref = is_belongs_to_ref(type);
+    const has_many_ref   = is_has_many_ref(model, type);
 
     if (belongs_to_ref) {
       attrs[belongs_to_ref.foreignKey] = {type: String};
-    } else {
+    } else if (!has_many_ref) {
       attrs[name] = {type: type};
     }
   }
@@ -99,34 +101,61 @@ function build_attributes_config(params) {
 /**
  * Builds the relationships config from the params
  *
+ * @param {String} the model name
  * @param {Object} raw user defined schema attributes
  * @return {Object} a normalized relationships schema
  */
-function build_relationships(params) {
+function build_relationships(model, params) {
   const rels = {};
 
   for (let name in params) {
     const type           = params[name];
     const belongs_to_ref = is_belongs_to_ref(type);
+    const has_many_ref   = is_has_many_ref(model, type);
 
     if (belongs_to_ref) {
-      rels[name] = new Relationship({
-        type:       "belongs-to",
-        model:      type,
-        primaryKey: belongs_to_ref.primaryKey,
-        foreignKey: belongs_to_ref.foreignKey
-      });
+      rels[name] = new Relationship(
+        Object.assign({type: "belongs-to"}, belongs_to_ref)
+      );
+    } else if (has_many_ref) {
+      rels[name] = new Relationship(
+        Object.assign({type: "has-many"}, has_many_ref)
+      );
     }
   }
 
   return rels;
 }
 
+/**
+ * Tries to identify a belong-to relationship config and build the options
+ *
+ * @param {mixed} a property type reference
+ * @return {Object|undefined} relationship options
+ */
 function is_belongs_to_ref(type) {
   if (typeof(type) === "string") {
     return {
+      model:      type,
       primaryKey: "id",
       foreignKey: `${type.toLowerCase()}Id`
+    };
+  }
+}
+
+/**
+ * Tries to identify a has many relationship
+ *
+ * @param {String} model name
+ * @param {mixed} a property type reference
+ * @return {Object|undefined} relationship options
+ */
+function is_has_many_ref(model, type) {
+  if (type.constructor === Array && type.length === 1 && typeof(type[0]) === "string") {
+    return {
+      model:      type[0],
+      primaryKey: "id",
+      foreignKey: `${model.toLowerCase()}Id`
     };
   }
 }

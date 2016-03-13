@@ -83,6 +83,7 @@ describe("Schema", () => {
     it("handles the belongsTo references", () => {
       schema.create("User", {username: String});
       schema.create("Post", {text: String, author: "User"});
+
       expect(schema.models).to.eql([
         {
           name: "User",
@@ -111,5 +112,89 @@ describe("Schema", () => {
         }
       ]);
     });
+
+    it("handles the hasMany relationships", () => {
+      schema.create("Post", { text: String });
+      schema.create("User", {
+        username: String,
+        posts: ["Post"]
+      });
+
+      expect(schema.models).to.eql([
+        {
+          name: "Post",
+          table: "posts",
+          attributes: {
+            id:     {type: String},
+            text:   {type: String}
+            // userId: {type: String}
+          },
+          relationships: {
+            // author: new Relationship({
+            //   type:       "belongs-to",
+            //   model:      "User",
+            //   primaryKey: "id",
+            //   foreignKey: "userId"
+            // })
+          }
+        }, {
+          name:  "User",
+          table: "users",
+          attributes: {
+            id:       {type: String},
+            username: {type: String}
+          },
+          relationships: {
+            posts: new Relationship({
+              type:       "has-many",
+              model:      "Post",
+              primaryKey: "id",
+              foreignKey: "userId"
+            })
+          }
+        }
+      ]);
+    });
+
+    // it("handles the hasMany relationships regardless of the definitions order", () => {
+    //   schema.create("User", {
+    //     username: String,
+    //     posts: ["Post"]
+    //   });
+    //   schema.create("Post", { text: String });
+    //
+    //   expect(schema.models).to.eql([
+    //     {
+    //       name:  "User",
+    //       table: "users",
+    //       attributes: {
+    //         username: String
+    //       },
+    //       relationships: {
+    //         posts: new Relationship({
+    //           type:       "has-many",
+    //           model:      "Post",
+    //           primaryKey: "id",
+    //           foreignKey: "userId"
+    //         })
+    //       }
+    //     }, {
+    //       name: "Post",
+    //       table: "posts",
+    //       attributes: {
+    //         text:   String,
+    //         userId: String
+    //       },
+    //       relationships: {
+    //         author: new Relationship({
+    //           type:       "belongs-to",
+    //           model:      "User",
+    //           primaryKey: "id",
+    //           foreignKey: "userId"
+    //         })
+    //       }
+    //     }
+    //   ]);
+    // });
   });
 });
