@@ -64,7 +64,7 @@ describe("Schema", () => {
     });
   });
 
-  describe("#create(name, attributes)", () => {
+  describe.only("#create(name, attributes)", () => {
     it("saves the name and attributes in the schema", () => {
       schema.create("User", {username: String});
       expect(schema.models).to.eql([
@@ -96,16 +96,16 @@ describe("Schema", () => {
           name: "Post",
           table: "posts",
           attributes: {
-            id:       {type: String},
-            text:     {type: String},
-            authorId: {type: String}
+            id:     {type: String},
+            text:   {type: String},
+            userId: {type: String}
           },
           relationships: {
             author: new Relationship({
               type:       "belongs-to",
               model:      "User",
               primaryKey: "id",
-              foreignKey: "authorId"
+              foreignKey: "userId"
             })
           }
         }

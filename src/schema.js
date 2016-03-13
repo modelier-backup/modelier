@@ -83,11 +83,11 @@ function build_attributes_config(params) {
   const attrs = {id: {type: String}};
 
   for (let name in params) {
-    const type = params[name];
+    const type           = params[name];
+    const belongs_to_ref = is_belongs_to_ref(type);
 
-    if (typeof(type) === "string") {
-      // a belongs-to reference
-      attrs[`${name}Id`] = {type: String};
+    if (belongs_to_ref) {
+      attrs[belongs_to_ref.foreignKey] = {type: String};
     } else {
       attrs[name] = {type: type};
     }
@@ -106,18 +106,27 @@ function build_relationships(params) {
   const rels = {};
 
   for (let name in params) {
-    const type = params[name];
+    const type           = params[name];
+    const belongs_to_ref = is_belongs_to_ref(type);
 
-    if (typeof(type) === "string") {
-      // consider this a belongs-to reference
+    if (belongs_to_ref) {
       rels[name] = new Relationship({
         type:       "belongs-to",
-        model:      params[name],
-        primaryKey: "id",
-        foreignKey: `${name}Id`
+        model:      type,
+        primaryKey: belongs_to_ref.primaryKey,
+        foreignKey: belongs_to_ref.foreignKey
       });
     }
   }
 
   return rels;
+}
+
+function is_belongs_to_ref(type) {
+  if (typeof(type) === "string") {
+    return {
+      primaryKey: "id",
+      foreignKey: `${type.toLowerCase()}Id`
+    };
+  }
 }
