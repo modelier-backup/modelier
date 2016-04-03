@@ -1,5 +1,6 @@
-import { expect } from "chai";
-import { Relationship } from "../src";
+"use strict";
+const { expect } = require("./helpers");
+const { Relationship } = require("../src");
 
 describe("Relationship", () => {
   it("converts functions to function names", () => {

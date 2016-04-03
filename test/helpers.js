@@ -1,6 +1,9 @@
-export * from "chai";
+"use strict";
+const chai = require("chai");
 
-export class FakeConnection {
+exports.expect = chai.expect;
+
+exports.FakeConnection = class FakeConnection {
   get records() {
     return this._records || [
       {id: "1", username: "user-1"},
@@ -84,7 +87,7 @@ export class FakeConnection {
   get lastQuery() {
     return this.queries[this.queries.length - 1];
   }
-}
+};
 
 // builds fake conditions clause for the SQL-ish thing
 function conditions(q) {

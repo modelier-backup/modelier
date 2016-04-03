@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Describes relationships between models
  */

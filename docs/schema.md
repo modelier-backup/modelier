@@ -77,15 +77,15 @@ Once you have this relationship defined, you can extract the actual related
 records in your business logic like so:
 
 ```js
-const post   = await Post.find(params.id);
-const author = await post.author;
+const post   = yield Post.find(params.id);
+const author = yield post.author;
 ```
 
 Essentially a belongs-to reference call in this case is an equivalent to this
 
 ```js
-const post   = await Post.find(params.id);
-const author = await User.find(post.userId);
+const post   = yield Post.find(params.id);
+const author = yield User.find(post.userId);
 ```
 
 But it also does memoization and assignments tracking in a developer friendly
@@ -94,13 +94,13 @@ way.
 You also can use the relationship references to query data:
 
 ```js
-const nikolays_posts = await Post.where({author: {username: "nikolay"}}).all();
+const nikolays_posts = yield Post.where({author: {username: "nikolay"}}).all();
 ```
 
 And you can lazy-load relationships within a single query:
 
 ```js
-const recent_posts = await Post.orderBy("createdAt", "desc").preload("author").all();
+const recent_posts = yield Post.orderBy("createdAt", "desc").preload("author").all();
 ```
 
 This will optimize the query to two calls to the database: the first one will
@@ -129,18 +129,18 @@ which works the other way around. Once you have it defined you can query on
 the related models:
 
 ```js
-const user = await User.find(params.id);
-const posts = await user.posts.all();
+const user  = yield User.find(params.id);
+const posts = yield user.posts.all();
 
 // or with parameters
-const last_posts = await user.posts.orderBy("createdAt", "desc").limit(10).all();
+const last_posts = yield user.posts.orderBy("createdAt", "desc").limit(10).all();
 ```
 
 Again, the has-many reference is just a shortcut for this:
 
 ```js
-const user  = await User.find(params.id);
-const posts = await Post.where({userId: user.id}).all();
+const user  = yield User.find(params.id);
+const posts = yield Post.where({userId: user.id}).all();
 ```
 
 But it abstract the relationship implementation details and allows us to work

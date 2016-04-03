@@ -1,5 +1,6 @@
-import { expect } from "chai";
-import { Schema, Record, Relationship } from "../src";
+"use strict";
+const { expect } = require("./helpers");
+const { Schema, Record, Relationship } = require("../src");
 
 describe("Schema", () => {
   class User extends Record {}
@@ -64,7 +65,7 @@ describe("Schema", () => {
     });
   });
 
-  describe.only("#create(name, attributes)", () => {
+  describe("#create(name, attributes)", () => {
     it("saves the name and attributes in the schema", () => {
       schema.create("User", {username: String});
       expect(schema.models).to.eql([

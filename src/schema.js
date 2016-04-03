@@ -1,3 +1,4 @@
+"use strict";
 const pluralize    = require("pluralize");
 const Relationship = require("./relationship");
 

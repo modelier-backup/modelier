@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Represents a row record as per activerecord understancing of a record
  *
