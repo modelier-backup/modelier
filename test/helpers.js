@@ -1,4 +1,3 @@
-"use strict";
 const chai = require("chai");
 
 exports.expect = chai.expect;

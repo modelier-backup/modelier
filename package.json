@@ -2,9 +2,14 @@
   "name": "modelier",
   "version": "0.0.0",
   "description": "A standard model abstraction",
+  "author": "Nikolay Nemshilov",
+  "license": "MIT",
   "main": "src/index.js",
+  "engine": {
+    "node": "^6.10.0"
+  },
   "scripts": {
-    "test": "mocha --recursive --harmony_destructuring test",
+    "test": "mocha",
     "lint": "eslint src test",
     "precommit": "npm run lint",
     "prepush": "npm run test"
@@ -19,15 +24,13 @@
     "flat",
     "file"
   ],
-  "author": "Nikolay Nemshilov",
-  "license": "MIT",
   "dependencies": {
-    "pluralize": "^1.2.1"
+    "pluralize": "^3.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^2.6.0",
-    "husky": "^0.11.4",
-    "mocha": "^2.4.5"
+    "eslint": "^3.16.1",
+    "husky": "^0.13.1",
+    "mocha": "^3.2.0"
   }
 }

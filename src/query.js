@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Represents an abstract query to the database
  */

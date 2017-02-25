@@ -1,4 +1,3 @@
-"use strict";
 const { expect } = require("./helpers");
 const { Schema, Record, Relationship } = require("../src");
 

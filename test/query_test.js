@@ -1,4 +1,3 @@
-"use strict";
 const { expect, FakeConnection } = require("./helpers");
 const { Query, Record, Schema } = require("../src");
 
