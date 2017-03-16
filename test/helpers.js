@@ -1,6 +1,6 @@
-const chai = require("chai");
+const { expect } = require("chai");
 
-exports.expect = chai.expect;
+global.expect = expect;
 
 exports.FakeConnection = class FakeConnection {
   get records() {

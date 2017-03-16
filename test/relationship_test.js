@@ -1,4 +1,3 @@
-const { expect } = require("./helpers");
 const { Relationship } = require("../src");
 
 describe("Relationship", () => {

@@ -1,4 +1,4 @@
-const { expect, FakeConnection } = require("./helpers");
+const { FakeConnection } = require("./helpers");
 const { Query, Record, Schema } = require("../src");
 
 describe("Query", () => {

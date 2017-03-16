@@ -5,6 +5,9 @@
     "node":  true,
     "mocha": true
   },
+  "globals": {
+    "expect": true
+  },
   "parserOptions": {
     "ecmaVersion": 8
   },
