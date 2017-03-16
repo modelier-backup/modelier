@@ -43,12 +43,18 @@ exports.FakeConnection = class FakeConnection {
   }
 
   insert(q, params) {
-    this.queries.push(`INSERT INTO ${q.model.tableName} ${hashToClauses(params).join(", ")}`);
+    const data = [].concat(params);
+    data.forEach(params =>
+      this.queries.push(`INSERT INTO ${q.model.tableName} ${hashToClauses(params).join(", ")}`)
+    );
 
     return new Promise((resolve) => {
-      const new_record = Object.assign({id: String(this.records.length + 1)}, params);
-      this.records.push(new_record);
-      resolve([new_record]);
+      resolve(data.map(params => {
+        const record = Object.assign({id: String(this.records.length + 1)}, params);
+        this.records = this.records.concat(record);
+        this.records.push(record);
+        return record;
+      }));
     });
   }
 

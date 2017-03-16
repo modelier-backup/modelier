@@ -43,7 +43,9 @@ module.exports = class Record {
   }
 
   static create(params) {
-    return new Query(this).insert(params).then(records => records[0]);
+    return new Query(this).insert(params).then(records =>
+      Array.isArray(params) ? records : records[0]
+    );
   }
 
   static update(params) {

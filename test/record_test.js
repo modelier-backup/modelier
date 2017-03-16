@@ -214,6 +214,18 @@ describe("Record", () => {
         "INSERT INTO users username='nikolay'"
       );
     });
+
+    it("allows to create a bunch of records", async () => {
+      const result = await User.create([
+        {username: "nikolay"},
+        {username: "antikolay"}
+      ]);
+
+      expect(result).to.eql([
+        new User({id: "4", username: "nikolay"}),
+        new User({id: "6", username: "antikolay"})
+      ]);
+    });
   });
 
   describe(".update(params)", () => {
