@@ -148,8 +148,8 @@ describe("Query", () => {
       expect(query.all()).to.be.instanceOf(Promise);
     });
 
-    it("resolves the promise into a list of models", function *() {
-      const result = yield query.all();
+    it("resolves the promise into a list of models", async () => {
+      const result = await query.all();
       expect(result).to.eql([
         new User({id: "1", username: "user-1"}),
         new User({id: "2", username: "user-2"}),
@@ -163,8 +163,8 @@ describe("Query", () => {
       expect(query.count()).to.be.instanceOf(Promise);
     });
 
-    it("resolves into a number from the connection", function *() {
-      const result = yield query.count();
+    it("resolves into a number from the connection", async () => {
+      const result = await query.count();
       expect(result).to.eql(3);
     });
   });
@@ -174,8 +174,8 @@ describe("Query", () => {
       expect(query.first()).to.be.instanceOf(Promise);
     });
 
-    it("resolves the promise into the first record", function *() {
-      const result = yield query.first();
+    it("resolves the promise into the first record", async () => {
+      const result = await query.first();
       expect(result).to.eql(new User({id: "1", username: "user-1"}));
     });
   });
@@ -185,8 +185,8 @@ describe("Query", () => {
       expect(query.last()).to.be.instanceOf(Promise);
     });
 
-    it("resolves the promise into the last record", function *() {
-      const result = yield query.last();
+    it("resolves the promise into the last record", async () => {
+      const result = await query.last();
       expect(result).to.eql(new User({id: "3", username: "user-3"}));
     });
   });
@@ -196,15 +196,15 @@ describe("Query", () => {
       expect(query.insert({username: "Nikolay"})).to.be.instanceOf(Promise);
     });
 
-    it("returns a new record", function *() {
-      const user = yield query.insert({username: "nikolay"});
+    it("returns a new record", async () => {
+      const user = await query.insert({username: "nikolay"});
       expect(user).to.eql([
         new User({id: "4", username: "nikolay"})
       ]);
     });
 
-    it("makes the right call into the database", function *() {
-      yield query.insert({username: "nikolay"});
+    it("makes the right call into the database", async () => {
+      await query.insert({username: "nikolay"});
       expect(connection.lastQuery).to.eql(
         "INSERT INTO users username='nikolay'"
       );
@@ -216,13 +216,13 @@ describe("Query", () => {
       expect(query.update({username: "boo"})).to.be.instanceOf(Promise);
     });
 
-    it("resolves into 'Ok'", function *() {
-      const result = yield query.update({username: "boo"});
+    it("resolves into 'Ok'", async () => {
+      const result = await query.update({username: "boo"});
       expect(result).to.be.eql("Ok");
     });
 
-    it("makes the right query to the database", function *() {
-      yield query.update({username: "boo"});
+    it("makes the right query to the database", async () => {
+      await query.update({username: "boo"});
       expect(connection.lastQuery).to.eql(
         "UPDATE users SET username='boo'"
       );
@@ -234,12 +234,12 @@ describe("Query", () => {
       expect(query.delete()).to.be.instanceOf(Promise);
     });
 
-    it("resolves into 'Ok'", function *() {
-      expect(yield query.delete()).to.eql("Ok");
+    it("resolves into 'Ok'", async () => {
+      expect(await query.delete()).to.eql("Ok");
     });
 
-    it("makes the right query to the database", function *() {
-      yield query.delete();
+    it("makes the right query to the database", async () => {
+      await query.delete();
       expect(connection.lastQuery).to.eql(
         "DELETE FROM users"
       );

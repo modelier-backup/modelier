@@ -51,18 +51,18 @@ describe("Record", () => {
   });
 
   describe(".find(id)", () => {
-    it("finds a record by an ID", function *() {
-      const user = yield User.find(1);
+    it("finds a record by an ID", async () => {
+      const user = await User.find(1);
       expect(user).to.eql(new User({id: "1", username: "user-1"}));
     });
 
-    it("resolves to `null` if a record doesn't exist", function *() {
-      const user = yield User.find("nothing");
+    it("resolves to `null` if a record doesn't exist", async () => {
+      const user = await User.find("nothing");
       expect(user).to.be.null;
     });
 
-    it("sends the right database query", function *() {
-      yield User.find("smth");
+    it("sends the right database query", async () => {
+      await User.find("smth");
       expect(connection.lastQuery).to.eql(
         "SELECT * FROM users WHERE id='smth' OFFSET 0 LIMIT 1"
       );
@@ -70,8 +70,8 @@ describe("Record", () => {
   });
 
   describe(".all()", () => {
-    it("extracts all the records", function *() {
-      const result = yield User.all();
+    it("extracts all the records", async () => {
+      const result = await User.all();
       expect(result).to.eql([
         new User({id: "1", username: "user-1"}),
         new User({id: "2", username: "user-2"}),
@@ -79,8 +79,8 @@ describe("Record", () => {
       ]);
     });
 
-    it("makes the right query to the database", function *() {
-      yield User.offset(0).limit(2).all();
+    it("makes the right query to the database", async () => {
+      await User.offset(0).limit(2).all();
       expect(connection.lastQuery).to.eql(
         "SELECT * FROM users OFFSET 0 LIMIT 2"
       );
@@ -88,13 +88,13 @@ describe("Record", () => {
   });
 
   describe(".first()", () => {
-    it("extracts the first record in the database", function *() {
-      const user = yield User.first();
+    it("extracts the first record in the database", async () => {
+      const user = await User.first();
       expect(user).to.eql(new User({id: "1", username: "user-1"}));
     });
 
-    it("makes the right database request", function *() {
-      yield User.first();
+    it("makes the right database request", async () => {
+      await User.first();
       expect(connection.lastQuery).to.eql(
         "SELECT * FROM users OFFSET 0 LIMIT 1"
       );
@@ -102,13 +102,13 @@ describe("Record", () => {
   });
 
   describe(".last()", () => {
-    it("extracts the last record in the database", function *() {
-      const user = yield User.last();
+    it("extracts the last record in the database", async () => {
+      const user = await User.last();
       expect(user).to.eql(new User({id: "3", username: "user-3"}));
     });
 
-    it("makes the right database request", function *() {
-      yield User.last();
+    it("makes the right database request", async () => {
+      await User.last();
       expect(connection.lastQuery).to.eql(
         "SELECT * FROM users OFFSET 2 LIMIT 1"
       );
@@ -203,13 +203,13 @@ describe("Record", () => {
   });
 
   describe(".create(params)", () => {
-    it("yields a new record", function *() {
-      const result = yield User.create({username: "nikolay"});
+    it("awaits a new record", async () => {
+      const result = await User.create({username: "nikolay"});
       expect(result).to.eql(new User({id: "4", username: "nikolay"}));
     });
 
-    it("runs the right query on the database", function *() {
-      yield User.create({username: "nikolay"});
+    it("runs the right query on the database", async () => {
+      await User.create({username: "nikolay"});
       expect(connection.lastQuery).to.eql(
         "INSERT INTO users username='nikolay'"
       );
@@ -217,19 +217,19 @@ describe("Record", () => {
   });
 
   describe(".update(params)", () => {
-    it("yields 'Ok'", function *() {
-      expect(yield User.update({admin: true})).to.eql("Ok");
+    it("awaits 'Ok'", async () => {
+      expect(await User.update({admin: true})).to.eql("Ok");
     });
 
-    it("runs the right query on the connection", function *() {
-      yield User.update({username: "blah", admin: false});
+    it("runs the right query on the connection", async () => {
+      await User.update({username: "blah", admin: false});
       expect(connection.lastQuery).to.eql(
         "UPDATE users SET username='blah', admin=false"
       );
     });
 
-    it("allows to nest params", function *() {
-      yield User.where({admin: true}).update({username: "nikolay"});
+    it("allows to nest params", async () => {
+      await User.where({admin: true}).update({username: "nikolay"});
       expect(connection.lastQuery).to.eql(
         "UPDATE users SET username='nikolay' WHERE admin=true"
       );
@@ -237,19 +237,19 @@ describe("Record", () => {
   });
 
   describe(".delete()", () => {
-    it("resolves into 'Ok'", function *() {
-      expect(yield User.delete()).to.eql("Ok");
+    it("resolves into 'Ok'", async () => {
+      expect(await User.delete()).to.eql("Ok");
     });
 
-    it("runs the right query on the connection", function *() {
-      yield User.delete();
+    it("runs the right query on the connection", async () => {
+      await User.delete();
       expect(connection.lastQuery).to.eql(
         "DELETE FROM users"
       );
     });
 
-    it("allows to nest params", function *() {
-      yield User.where({admin: true}).delete();
+    it("allows to nest params", async () => {
+      await User.where({admin: true}).delete();
       expect(connection.lastQuery).to.eql(
         "DELETE FROM users WHERE admin=true"
       );
@@ -308,13 +308,13 @@ describe("Record", () => {
 
   describe("#save()", () => {
     describe("on a new record", () => {
-      it("yields the instance back", function *() {
-        const result = yield user.save();
+      it("awaits the instance back", async () => {
+        const result = await user.save();
         expect(result).to.equal(user);
       });
 
-      it("runs an INSERT query on the databse", function *() {
-        yield user.save();
+      it("runs an INSERT query on the databse", async () => {
+        await user.save();
         expect(connection.lastQuery).to.eql(
           "INSERT INTO users username='boo'"
         );
@@ -327,13 +327,13 @@ describe("Record", () => {
         user.username = "new nikolay";
       });
 
-      it("it yelds the instance back", function *() {
-        const result = yield user.save();
+      it("it yelds the instance back", async () => {
+        const result = await user.save();
         expect(result).to.equal(user);
       });
 
-      it("runs an update query on the database", function *() {
-        yield user.save();
+      it("runs an update query on the database", async () => {
+        await user.save();
         expect(connection.lastQuery).to.eql(
           "UPDATE users SET username='new nikolay' WHERE id='123'"
         );
@@ -344,18 +344,18 @@ describe("Record", () => {
   describe("#update(params)", () => {
     beforeEach(() => user.id = "user-1");
 
-    it("sets the new params on a record", function *() {
-      yield user.update({username: "nikolay"});
+    it("sets the new params on a record", async () => {
+      await user.update({username: "nikolay"});
       expect(user.username).to.eql("nikolay");
     });
 
-    it("yelds the record back", function *() {
-      const result = yield user.update({username: "nikolay"});
+    it("yelds the record back", async () => {
+      const result = await user.update({username: "nikolay"});
       expect(result).to.equal(user);
     });
 
-    it("runs the right query on the database", function *() {
-      yield user.update({username: "nikolay"});
+    it("runs the right query on the database", async () => {
+      await user.update({username: "nikolay"});
       expect(connection.lastQuery).to.eql(
         "UPDATE users SET username='nikolay' WHERE id='user-1'"
       );
@@ -365,13 +365,13 @@ describe("Record", () => {
   describe("#delete()", () => {
     beforeEach(() => user.id = "user-1");
 
-    it("yelds back the record itself", function *() {
-      const result = yield user.delete();
+    it("yelds back the record itself", async () => {
+      const result = await user.delete();
       expect(result).to.equal(user);
     });
 
-    it("runs the right query on the database", function *() {
-      yield user.delete();
+    it("runs the right query on the database", async () => {
+      await user.delete();
       expect(connection.lastQuery).to.eql(
         "DELETE FROM users WHERE id='user-1'"
       );
